@@ -1,10 +1,10 @@
-###THIS SCRIPT HELPS YOU ORGANIZE YOUR PICTURE LIBRARIES. IN DOING SO IT EITHER COPIES OR MOVES PHOTOS BASED ON YOUR PARAMETERS. AS WITH AY AUTOMATION SCRIPT, IT IS IMPORTANT TO BACKUP YOUR DATA FIRST BEFORE RUNNING ANY COMMANDS BELOW.
+###THIS SCRIPT HELPS YOU ORGANIZE YOUR PICTURE LIBRARIES. IN DOING SO IT EITHER COPIES OR MOVES PHOTOS BASED ON YOUR PARAMETERS. AS WITH ANY AUTOMATION SCRIPT, IT IS IMPORTANT TO BACKUP YOUR DATA FIRST BEFORE RUNNING ANY COMMANDS BELOW.
 
 #Summary
 We all have photos stored all over the place. This script is inteded to find those photos and organize them to your liking. The script uses the `Date Picture Taken` property of your images to sort them according to the date they were actually taken. If it cannot find this property it will use the `Created` date instead.
 
 #Recommendation
-I recommend that you follow the tutorial at the bottom of this page with the sample photos to get a feel for how the script works.
+I recommend that you follow the tutorial at the bottom of this README with the sample photos to get a feel for how the script works.
 
 ## Organize-Photos
 Organize-Photos is the single function that is used to organize all of your photos. 
