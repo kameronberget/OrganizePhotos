@@ -67,7 +67,7 @@ Your resulting file structure would be:
 Copy the script Group-Pictures.ps1 into any location.
 
 ##Run in place
-1. You can accept the defaults and simply right click the script and choose **Run with PowerShell**. This will search teh current directory BUT NOT subdirectories and create a new structure for your photos of `YearThenMonth`.
+1. You can accept the defaults and simply right click the script and choose **Run with PowerShell**. This will search the current directory BUT NOT subdirectories and create a new structure for your photos of `YearThenMonth`.
 
 ##Run with custom parameters
 1. Open PowerShell.
