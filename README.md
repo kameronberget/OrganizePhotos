@@ -145,7 +145,7 @@ Summar Hike, 8/27/2015, 8/28/2015
 - We specified a destination of "MyTrips" to create a new structure.
 - The script prompted use to create the new folder as it did not exist.
 - Our files were COPIED and not MOVED as the default operation is COPY. We can override that by using `-Operation Move`
-- Our 'August' folder had an additional level of 'Summer Trip' that contained one image. This is because the image matched our date filter inside our CSV. This is a greate way to further orgnanize events.
+- Our 'August' folder had an additional level of 'Summer Hike' that contained one image. This is because the image matched our date filter inside our CSV. This is a greate way to further orgnanize events.
 
 #Logging
 Everytime you run the script a log is created inside the folder in which it was ran.
