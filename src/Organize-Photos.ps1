@@ -33,6 +33,12 @@
 
     )
 
+    #Logging 
+    $logDate = Get-Date -Format "MMddyyyyHHmm"
+    $fLogDate = Get-Date
+
+
+
     #Load Drawing DLL
     $load = [reflection.assembly]::LoadFile("C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Drawing.dll") 
 
@@ -199,7 +205,9 @@ function Get-Month($m) {
 }
 
 function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $OrganizeBy, $AddDatePrefix, $Filter, $LabelEvents) {
-    
+	
+	$scriptStart = Get-Date
+	
     switch ($Scope) {
         
         "SortCurrentDirectory" {
@@ -219,11 +227,31 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
     }
 
 
+    $html = '<!doctype html>
+                  <head>
+                    <meta charset="utf-8"/>
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+                    <title></title>
+                    <meta name="description" content="">
+                    <meta name="viewport" content="width=device-width">
+                    
+                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                </head>'
+
+    
+
+	$actions = @()
+	$dataMoved = 0
+
     if ($pictures.count -gt 0) {
         foreach ($p in $pictures) {
-        
+			
+			#Metrics
+			$dataMoved += $p.Length
+			
             [datetime]$dateTaken = Get-DatePictureTaken -picture $p
 
+			
             if (!([string]::IsNullOrEmpty($Filter))) {
                 if ($dateTaken -lt (Get-Date $filter.Split("-")[0]) -or $dateTaken -gt (Get-Date $filter.Split("-")[1])) {
                     Write-Host "$($p.Name) is outside the filter values. Skipping" -ForegroundColor Yellow
@@ -287,17 +315,39 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                 "Copy" {
                     try {
                         Write-Host "Copying $($p.Name) to $newPath..." -NoNewline 
+                        $copyStart = Get-Date                       
                         Copy-Picture -picture $p -destination $newPath
+                        $copyEnd = Get-Date
 
                         if ($AddDatePrefix) {
                             Rename-Item -Path ($newPath.TrimEnd("\") + "\" + $p.Name) -NewName ($(Get-Date $dateTaken -Format MMddyyyy) + "-" + $p.Name)
                         }
 
                         Write-Host "Done" -ForegroundColor Green
+                        $o = New-Object -TypeName PSObject -Property @{
+                            Operation = "Copy";
+                            Source = $p.FullName;
+                            Destination = ($newPath.TrimEnd("\") + "\" + $p.Name);
+                            Elapsed = "{0:N2}" -f ($copyEnd - $copyStart).TotalMilliseconds;
+                            Status = "Success";
+                            Size = "{0:N2}" -f ($p.Length /1MB);
+                            LogType = "Ok";
+                        }
+						$actions += $o
                         break;
 
                     } catch {
-                    
+                        $o = New-Object -TypeName PSObject -Property @{
+                            Operation = "Copy";
+                            Source = $p.FullName;
+                            Destination = ($newPath.TrimEnd("\") + "\" + $p.Name);
+                            Elapsed = "{0:N2}" -f ($copyEnd - $copyStart).TotalMilliseconds;
+                            Status = "Error: $($Error[0].Exception)";
+                            Size = "{0:N2}" -f ($p.Length /1MB);
+                            LogType = "Error"
+                        }
+						$actions += $o
+						
                     }
                 }
 
@@ -305,34 +355,122 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                 
                     try {
                         Write-Host "Moving $($p.Name) to $newPath..." -NoNewline 
+                        $moveStart = Get-Date
                         Move-Picture -picture $p -destination $newPath
-
+                        $moveEnd = Get-Date
                         if ($AddDatePrefix) {
                                 Rename-Item -Path ($newPath.TrimEnd("\") + "\" + $p.Name) -NewName ($(Get-Date $dateTaken -Format MMddyyyy) + "-" + $p.Name)
                             }
                         Write-Host "Done" -ForegroundColor Green
+                        $o = New-Object -TypeName PSObject -Property @{
+                            Operation = "Move";
+                            Source = $p.FullName;
+                            Destination = ($newPath.TrimEnd("\") + "\" + $p.Name);
+                            Status = "Success";
+                            Elapsed = "{0:N2}" -f ($moveEnd - $moveStart).TotalMilliseconds;
+                            Size = "{0:N2}" -f ($p.Length /1MB);
+                            LogType = "Ok";
+                        }
+						$actions += $o
                         break;
                     } catch {
-
+                        $o = New-Object -TypeName PSObject -Property @{
+                            Operation = "Move";
+                            Source = $p.FullName;
+                            Destination = ($newPath.TrimEnd("\") + "\" + $p.Name);
+                            Elapsed = "{0:N2}" -f ($moveEnd - $moveStart).TotalMilliseconds;
+                            Status = "Error: $($Error[0].Exception)";
+                            Size = "{0:N2}" -f ($p.Length /1MB);
+                            LogType = "Error";
+                        }
+						$actions += $o
                     }
                 }
 
             }
 
-
         }
+
     } ## If picture count is gt 0
     else {
         Write-Host "No images found" -ForegroundColor Red
         break;
     }
+	
+	$scriptEnd = Get-Date
+    $htmlHeader += '<table class="table table-striped table-hover">
+                <tr>
+                    <th>Run Date</th>
+                    <th>Success</th>
+                    <th>Failure</th>
+                    <th>Log File</th>
+					<th>Duration (minutes)</th>
+					<th>Total Moved (MB)</th>
+					<th>Performance</th>
+                </tr>
+                <tbody>
+                    <tr class="warning">
+                        <td>' + $fLogDate + '</td>
+                        <td>' + ($actions | ?{$_.Status -match "Success"}).Count + '</td>
+                        <td>' + ($actions | ?{$_.Status -match "Error"}).Count + '</td>
+                        <td>Log_' + $logDate + '.txt</td>
+						<td>' + "{0:N2}" -f (($scriptEnd - $scriptStart).TotalMinutes) + '</td>
+						<td>' + "{0:N2}" -f ($dataMoved /1MB)+ '</td>
+						<td>~' + "{0:N2}" -f (($actions | ?{$_.Status -match "Success"}).Count / ($scriptEnd - $scriptStart).TotalSeconds) + ' Pictures/second<br>~
+							' + "{0:N2}" -f (($dataMoved / ($scriptEnd - $scriptStart).TotalSeconds) /1MB ) + ' MB/second
+						</td>
+                    </tr>
+                </tbody>
+                </table>'
+    
+    foreach ($a in $actions) {
+        
+        $class = if ($a.Status -match "Error") { "danger" } else { "success" }
 
+        $rows += '<tr class="' + $class + '">
+                    <td>' + $a.Operation + '</td>
+                    <td>' + $a.Source + '</td>
+                    <td>' + $a.Destination + '</td>
+                    <td>' + $a.Size + '</td>
+                    <td>' + $a.Elapsed + '</td>
+                    <td>' + $a.Status + '</td>
+                </tr>'
+        
+    }
+    
+    $logTable =  '<table class="table table-striped table-hover">
+                    <tr>
+                        <th>Operation</th>
+                        <th>Source</th>
+                        <th>Destination</th>
+                        <th>Size (MB)</th>
+                        <th>Duration (ms)</th>
+                        <th>Result</th>
+                    </tr>
+                    <tbody>
+                        ' + $rows + '
+                    </tbody>
+                </table>'
+    $html += '<body>
+                
+                <div class="container">
+                    <h1>Your Photo Organizer Report</h1>
+                    <small>Your command: ' + $cmdRun + '</small>
+                    ' + $htmlHeader + '
+                    ' + $logTable + '
+                </div>
+            </body>'
+
+    $html | Out-File "Report_$logDate.html"
 }
 
 
 #RUN
 
-$logDate = Get-Date -Format "MMddyyyyHHmm"
+
+
 Start-Transcript -Path "Log_$logDate.txt"
+$cmdRun = ".\Organize-Pictures -Recurse $Recurse -Scope $Scope -target $target -destination $destination -Operation $Operation -OrganizeBy $OrganizeBy -AddDatePrefix $AddDatePrefix -Filter $Filter -LabelEvents $LabelEvents"
 Group-Pictures -Recurse $Recurse -Scope $Scope -target $target -destination $destination -Operation $Operation -OrganizeBy $OrganizeBy -AddDatePrefix $AddDatePrefix -Filter $Filter -LabelEvents $LabelEvents
+
 Stop-Transcript
