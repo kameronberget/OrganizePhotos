@@ -148,7 +148,9 @@ Summar Hike, 8/27/2015, 8/28/2015
 - Our 'August' folder had an additional level of 'Summer Hike' that contained one image. This is because the image matched our date filter inside our CSV. This is a greate way to further orgnanize events.
 
 #Logging
-Everytime you run the script a log is created inside the folder in which it was ran.
+Everytime you run the script a log is created inside the folder in which it was ran. An HTML report is also generated that contains info for each operation. 
+
+**YOU MUST USE IE TO VIEW THE REPORT**
 
 
 
