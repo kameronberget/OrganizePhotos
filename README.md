@@ -127,12 +127,13 @@ To get started:
 - Our destination ended up only having 'April' and 'August' folders due to our filter.
 
 ##Provide Event Labels
-####Next, we will proide a CSV that contains labels for our images.
+####Next, we will provide a CSV that contains labels for our images.
 
 1. Open the sampleLabel.csv file in notepad that is inside the tutorial folder.
 2. Our CSV should look like this:
 
 Label, Start, End
+
 Summar Hike, 8/27/2015, 8/28/2015
 
 *You can save the file as CSV or TXT. It doesn't matter which you choose.*
