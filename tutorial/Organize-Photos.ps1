@@ -25,10 +25,6 @@
         [Parameter(Position=7, HelpMessage='Use this switch to prepend the Date to the filename after copying or moving')]
         [switch]$AddDatePrefix,
 
-        [Parameter(Position=8, HelpMessage='What should the operation do on conflict of a file already existing?')]
-        [ValidateSet('Skip','Rename','Prompt')]
-        $Conflict,
-
         [Parameter(Position=9, HelpMessage='Filter the scope by start and end dates in this format "8/1/2015-8/1/2016" ')]
         [string]$Filter,
 
