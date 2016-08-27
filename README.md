@@ -86,11 +86,11 @@ To get started:
 
 ##Organize the folders using defaults.
 ####By using defaults, we only search the current directory in which we ran the script. Additionally, we can simply run the script without passing any parameters. Give it a shot:
-1. Double-Click or Right-Click > Run with PowerShell the Organize-Photos.ps1 file.
+1. `Right-Click > Run with PowerShell` the Organize-Photos.ps1 file. (You might get prompted to allow the script to run)
 2. Wait for the operation to complete.
-3. You should have a new folder structure of Year-Month and a COPY of all your test photos. 
+3. You should have a new folder structure of YearThenMonth and a COPY of all your test photos. 
 4. Nice work! 
-5. Delete the folder it created.
+5. Delete the folder(s) it created.
 
 ##Organize the folders by adding a single overriding parameter
 ####Next we will move the photos instead of copy:
