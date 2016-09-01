@@ -39,7 +39,7 @@ Organize-Photos
 | Target | False | String | The target paramter accepts a string <path> to the directory you wish to organize. This parameter is only used when the `-Scope` parameter is set to either **SortTargetDirectory** or **SortTargetNewDestination**.
 | Destination | False | String | The destination paramter accepts a string <path> to the directory you wish to store your new organized structure. This parameter is only used when the `-Scope` parameter is set to **SortTargetNewDestination**. Otherwise it is ignored.
 | Operation | True | String [TabComplete] | This parameter defines whether we `copy` photos into the new structure or `move` them into the new structure. |
-| OrganizeBy | True | String [TabComplete] | This parameters defines how you want the final structure to be organized. **Month-Year** provides a single level output with folders named Month-Year, e.g. January-2016\\*images*. **YearThenMonth** provides a two level structure of Year\Month, e.g 2016\January\*images*. **YearThenMonthThenDay** provides a three level structure of Year\Month\Day, e.g 2016\January\1\\*images* 
+| OrganizeBy | True | String [TabComplete] | This parameters defines how you want the final structure to be organized. **Month-Year** provides a single level output with folders named Month-Year, e.g. January-2016\\*images*. **YearThenMonth** provides a two level structure of Year\Month, e.g 2016\January\\*images*. **YearThenMonthThenDay** provides a three level structure of Year\Month\Day, e.g 2016\January\1\\*images* 
 | AddDatePrefix | False | Switch | This will add a date prefix to the start of the image. This helps when sorting images in explorer. e.g. 01012016_IMG_01.jpg 
 | Filter | False | String | The filter switch accepts and string of StartDate-EndDate. It is important to sepearate the two date with a '-'. This will organize photos into a new structure but will only grab images from the specified date range.
 | LabelEvents | False | String | This parameter will add an additiaonl level of sorting my creating folders for defined events. This paramter accepts a path to a CSV file that contains the structure fround in the **CSV Format** below. While processing images, the script will look at your labels to see if the picture matches. If it does, it creates a new folder for that Event.
@@ -50,12 +50,12 @@ Organize-Photos
 
 | Option | Default | Results | 
 | ------ | ------- | ------- |
-| YEAR-MONTH | FALSE | 2016-January\*images* |
-| MONTH-YEAR | FALSE | January-2016\*images* |
-| YEAR\MONTHNAME | FALSE | 2016\January\*images* |
-| YEAR\MONTHNUMBER-MONTHNAME | TRUE | 2016\1-January\*images* |
-| YEAR\MONTHNAME\DAY | FALSE | 2016\Janurary\01\*images* |
-| YEAR\MONTHNUMBER-MONTHNAME\DAY | FALSE | 2016\1-January\01\*images* |
+| YEAR-MONTH | FALSE | 2016-January\\*images* |
+| MONTH-YEAR | FALSE | January-2016\\*images* |
+| YEAR\MONTHNAME | FALSE | 2016\January\\*images* |
+| YEAR\MONTHNUMBER-MONTHNAME | TRUE | 2016\1-January\\*images* |
+| YEAR\MONTHNAME\DAY | FALSE | 2016\Janurary\01\\*images* |
+| YEAR\MONTHNUMBER-MONTHNAME\DAY | FALSE | 2016\1-January\01\\*images* |
 
 
 #CSV Format (LabelEvents)
