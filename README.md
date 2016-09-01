@@ -69,12 +69,6 @@ e.g. C:\users\jdoe\desktop\labels.csv
 
 When using the `-LabelEvents` you pass it a path like this: `-LabelEvents c:\users\jdoe\desktop\labels.csv`
 
-Your resulting file structure would be:
-
-- `OrganizeBy Month-Year`: January-2016\New Year's Eve\\*images*
-- `OrganizeBy YearThenMonth`: 2016\January\New Year's Eve\\*images*
-- `OrganizeBy YearThenMonthThenDay`: 2016\January\01\New Year's Eve\\*images*
-
 #Using the script
 Copy the script Group-Pictures.ps1 into any location.
 
