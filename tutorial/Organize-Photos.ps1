@@ -19,8 +19,8 @@
         $Operation = "Copy",
 
 		[Parameter(Position=6, HelpMessage='How do you want your new folder structure to appear? Month-Year (Folder) YearThenMonth (Nested as Year/Month, etc).')]
-        [ValidateSet('Month-Year', 'YearThenMonth', 'YearThenMonthThenDay')]
-        $OrganizeBy = "YearThenMonth",
+        [ValidateSet('YEAR-MONTH','MONTH-YEAR','YEAR\MONTHNAME','YEAR\MONTHNUMBER-MONTHNAME','YEAR\MONTHNAME\DAY','YEAR\MONTHNUMBER-MONTHNAME\DAY')]
+        $OrganizeBy = "YEAR\MONTHNUMBER-MONTHNAME",
 
         [Parameter(Position=7, HelpMessage='Use this switch to prepend the Date to the filename after copying or moving')]
         [switch]$AddDatePrefix,
@@ -262,18 +262,33 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
             $month = Get-Month -m $dateTaken.Month
             switch($OrganizeBy) {
 
-                "Month-Year" {
+                "MONTH-YEAR" {
                     $newFolder = $month + "-" + $dateTaken.Year
                     break;
                 }
-            
-                "YearThenMonth" {
-                    $newFolder = $dateTaken.Year.toString() + "\" + $month
+
+                "YEAR-MONTH" {
+                    $newFolder = $dateTaken.Year + "-" + $month
                     break;
                 }
             
-                "YearThenMonthThenDay" {
+                "YEAR\MONTHNAME" {
+                    $newFolder = $dateTaken.Year.toString() + "\" + $month
+                    break;
+                }
+
+                "YEAR\MONTHNUMBER-MONTHNAME" {
+                    $newFolder = $dateTaken.Year.toString() + "\" + $dateTaken.Month + "-" + $month
+                    break;
+                }
+            
+                "YEAR\MONTHNAME\DAY" {
                     $newFolder = $dateTaken.Year.toString() + "\" + $month + "\" + $dateTaken.Day.toString()
+                    break;
+                }
+
+                "YEAR\MONTHNUMBER-MONTHNAME\DAY" {
+                    $newFolder = $dateTaken.Year.toString() + "\" + $dateTaken.Month + "-" + $month + "\" + $dateTaken.Day.toString()
                     break;
                 }
 
