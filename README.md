@@ -17,7 +17,7 @@ Organize-Photos
   
     -Scope ['SortCurrentDirectory', 'SortTargetDirectory', 'SortTargetNewDestination']
     
-    -target <path>
+    -Target <path>
     
     -Destination <path>
     
@@ -54,7 +54,7 @@ Organize-Photos
 | MONTH-YEAR | FALSE | January-2016\\*images* |
 | YEAR\MONTHNAME | FALSE | 2016\January\\*images* |
 | YEAR\MONTHNUMBER-MONTHNAME | TRUE | 2016\1-January\\*images* |
-| YEAR\MONTHNAME\DAY | FALSE | 2016\Janurary\01\\*images* |
+| YEAR\MONTHNAME\DAY | FALSE | 2016\January\01\\*images* |
 | YEAR\MONTHNUMBER-MONTHNAME\DAY | FALSE | 2016\1-January\01\\*images* |
 
 
