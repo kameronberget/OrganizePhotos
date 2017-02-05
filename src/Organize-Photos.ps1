@@ -96,7 +96,7 @@ function Get-DatePictureTaken($picture) {
     } catch {
         
         # Date picture taken not found
-        $dateTaken = $picture.CreationTime
+        $dateTaken = $picture.LastWriteTime
 
     }
     
