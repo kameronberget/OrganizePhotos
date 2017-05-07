@@ -80,32 +80,13 @@
 
 function Get-DatePictureTaken($picture) {
         
-    # Gets image data 
-    $ImgData = New-Object System.Drawing.Bitmap($picture.FullName)
 
-    
-    try {
-    
-        # Try to get Date in bytes 
-        [byte[]]$ImgBytes = $ImgData.GetPropertyItem(36867).Value
-        [string]$dateString = [System.Text.Encoding]::ASCII.GetString($ImgBytes) 
-    
-        # Formats the date to the desired format 
-        [string]$dateTaken = [datetime]::ParseExact($dateString,"yyyy:MM:dd HH:mm:ss`0",$Null).ToString('MM-dd-yyyy')
-    
-    } catch {
-        
-        # Date picture taken not found
-        $dateTaken = $picture.LastWriteTime
+    # Date picture taken not found
+    $dateTaken = $picture.LastWriteTime
 
-    }
     
     # Date Object
     $dDateTaken = Get-Date $dateTaken 
-
-
-    #Dispose
-    $ImgData.Dispose()
 
 
     return $dDateTaken
@@ -123,6 +104,7 @@ function Copy-Picture {
         [Parameter(Mandatory=$false, Position=2, HelpMessage='Add a date prefix to the image.')]
         [switch]$DatePrefix
     )
+
     $random = Get-Random -Maximum 100
     $date = ($(Get-Date $dateTaken -Format MMddyyyy))
     if (Test-Path $picture.FullName) {
@@ -148,7 +130,7 @@ function Move-Picture {
         [Parameter(Mandatory=$false, Position=2, HelpMessage='Add a date prefix to the image.')]
         [switch]$DatePrefix
     )
-    
+
     $random = Get-Random -Maximum 100
     $date = ($(Get-Date $dateTaken -Format MMddyyyy))
 
@@ -161,7 +143,6 @@ function Move-Picture {
     } else {
          Move-Item -Path $picture.FullName -Destination $destination
     }
-   
 }
 
 function Get-Month($m) {
@@ -238,17 +219,17 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
     switch ($Scope) {
         
         "SortCurrentDirectory" {
-            $pictures = if ($Recurse) { Get-ChildItem -Path * -Recurse -Include *.jpeg, *.png, *.gif, *.jpg, *.bmp, *.png } else { Get-ChildItem -Path * -Include *.jpeg, *.png, *.gif, *.jpg, *.bmp, *.png }
+            $pictures = if ($Recurse) { Get-ChildItem -Path * -Recurse -Include *.mov, *.mp4, *.mov, *.avi, *.mpg, *.3gp } else { Get-ChildItem -Path * -Include *.mov, *.mp4, *.mov, *.avi, *.mpg, *.3gp }
             break;
         }
 
         "SortTargetDirectory" {
-            $pictures = if ($Recurse) { Get-ChildItem -Path $target -Recurse -Include *.jpeg, *.png, *.gif, *.jpg, *.bmp, *.png} else { Get-ChildItem -Path $target -Include *.jpeg, *.png, *.gif, *.jpg, *.bmp, *.png }
+            $pictures = if ($Recurse) { Get-ChildItem -Path $target -Recurse -Include *.mov, *.mp4, *.mov, *.avi, *.mpg, *.3gp} else { Get-ChildItem -Path $target -Include *.mov, *.mp4, *.mov, *.avi, *.mpg, *.3gp }
             break;
         }
 
         "SortTargetNewDestination" {
-            $pictures = if ($Recurse) { Get-ChildItem -Path $target -Recurse -Include *.jpeg, *.png, *.gif, *.jpg, *.bmp, *.png } else { Get-ChildItem -Path $target -Include *.jpeg, *.png, *.gif, *.jpg, *.bmp, *.png }
+            $pictures = if ($Recurse) { Get-ChildItem -Path $target -Recurse -Include *.mov, *.mp4, *.mov, *.avi, *.mpg, *.3gp } else { Get-ChildItem -Path $target -Include *.mov, *.mp4, *.mov, *.avi, *.mpg, *.3gp }
             break;
         }
     }
@@ -358,12 +339,12 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                     try {
                         Write-Host "Copying $($p.Name) to $newPath..." -NoNewline 
                         $copyStart = Get-Date                       
+                        
                         if ($AddDatePrefix) {
                             Copy-Picture -picture $p -destination $newPath -DatePrefix
                         } else {
                             Copy-Picture -picture $p -destination $newPath
                         }
-
                         $copyEnd = Get-Date
 
                         Write-Host "Done" -ForegroundColor Green
@@ -400,11 +381,10 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                         Write-Host "Moving $($p.Name) to $newPath..." -NoNewline 
                         $moveStart = Get-Date
                         if ($AddDatePrefix) {
-                            Move-Picture -picture $p -destination $newPath -DatePrefix
+                            Move-Picture -picture $p -destination $newPath -Dateprefix
                         } else {
                             Move-Picture -picture $p -destination $newPath
                         }
-                        
                         $moveEnd = Get-Date
 
                         Write-Host "Done" -ForegroundColor Green
@@ -420,7 +400,6 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
 						$actions += $o
                         break;
                     } catch {
-                        Write-Host "Error" -ForegroundColor Red
                         $o = New-Object -TypeName PSObject -Property @{
                             Operation = "Move";
                             Source = $p.FullName;
