@@ -19,7 +19,7 @@
         $Operation = "Copy",
 
 		[Parameter(Position=6, HelpMessage='How do you want your new folder structure to appear? Month-Year (Folder) YearThenMonth (Nested as Year/Month, etc).')]
-        [ValidateSet('YEAR-MONTH','MONTH-YEAR','YEAR\MONTHNAME','YEAR\MONTHNUMBER-MONTHNAME','YEAR\MONTHNAME\DAY','YEAR\MONTHNUMBER-MONTHNAME\DAY')]
+        [ValidateSet('YEAR','YEAR-MONTH','MONTH-YEAR','YEAR\MONTHNAME','YEAR\MONTHNUMBER-MONTHNAME','YEAR\MONTHNAME\DAY','YEAR\MONTHNUMBER-MONTHNAME\DAY')]
         $OrganizeBy = "YEAR\MONTHNUMBER-MONTHNAME",
 
         [Parameter(Position=7, HelpMessage='Use this switch to prepend the Date to the filename after copying or moving')]
@@ -289,13 +289,17 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
             $month = Get-Month -m $dateTaken.Month
             switch($OrganizeBy) {
 
+                "YEAR" {
+                    $newFolder = $dateTaken.Year.toString()
+                    break;
+                }
                 "MONTH-YEAR" {
-                    $newFolder = $month + "-" + $dateTaken.Year
+                    $newFolder = $month + "-" + $dateTaken.Year.toString()
                     break;
                 }
 
                 "YEAR-MONTH" {
-                    $newFolder = $dateTaken.Year + "-" + $month
+                    $newFolder = $dateTaken.Year.toString() + "-" + $month
                     break;
                 }
             
@@ -305,7 +309,7 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                 }
 
                 "YEAR\MONTHNUMBER-MONTHNAME" {
-                    $newFolder = $dateTaken.Year.toString() + "\" + $dateTaken.Month + "-" + $month
+                    $newFolder = $dateTaken.Year.toString() + "\" + $dateTaken.Month.toString() + "-" + $month
                     break;
                 }
             
@@ -315,7 +319,7 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                 }
 
                 "YEAR\MONTHNUMBER-MONTHNAME\DAY" {
-                    $newFolder = $dateTaken.Year.toString() + "\" + $dateTaken.Month + "-" + $month + "\" + $dateTaken.Day.toString()
+                    $newFolder = $dateTaken.Year.toString() + "\" + $dateTaken.Month.toString() + "-" + $month + "\" + $dateTaken.Day.toString()
                     break;
                 }
 
