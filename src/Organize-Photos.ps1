@@ -96,7 +96,7 @@ function Get-DatePictureTaken($picture) {
     } catch {
         
         # Date picture taken not found
-        $dateTaken = $picture.CreationTime
+        $dateTaken = $picture.LastWriteTime
 
     }
     
@@ -118,10 +118,22 @@ function Copy-Picture {
         $picture,
     
         [Parameter(Mandatory=$true, Position=2, HelpMessage='Define the destination for the picture.')]
-        [string]$destination
-    )
+        [string]$destination,
 
-    Copy-Item -Path $picture.FullName -Destination $destination
+        [Parameter(Mandatory=$false, Position=2, HelpMessage='Add a date prefix to the image.')]
+        [switch]$DatePrefix
+    )
+    $random = Get-Random -Maximum 100
+    $date = ($(Get-Date $dateTaken -Format MMddyyyy))
+    if (Test-Path $picture.FullName) {
+        if ($DatePrefix) {
+            Copy-Item -Path $picture.FullName -Destination ($destination.TrimEnd("\") + "\" + "$date" + "_" + $picture.BaseName + "_$random" + $picture.Extension)
+        } else {
+            Copy-Item -Path $picture.FullName -Destination ($destination.TrimEnd("\") + "\" + $picture.BaseName + "_$random" + $picture.Extension)
+        }
+    } else {
+        Copy-Item -Path $picture.FullName -Destination $destination
+    }
 }
 
 function Move-Picture {
@@ -131,10 +143,25 @@ function Move-Picture {
         $picture,
     
         [Parameter(Mandatory=$true, Position=2, HelpMessage='Define the destination for the picture.')]
-        [string]$destination
-    )
+        [string]$destination,
 
-    Move-Item -Path $picture.FullName -Destination $destination
+        [Parameter(Mandatory=$false, Position=2, HelpMessage='Add a date prefix to the image.')]
+        [switch]$DatePrefix
+    )
+    
+    $random = Get-Random -Maximum 100
+    $date = ($(Get-Date $dateTaken -Format MMddyyyy))
+
+    if (Test-Path $picture.FullName) {
+        if ($DatePrefix) {
+            Move-Item -Path $picture.FullName -Destination ($destination.TrimEnd("\") + "\" + "$date" + "_" + $picture.BaseName + "_$random" + $picture.Extension)
+        } else {
+            Move-Item -Path $picture.FullName -Destination ($destination.TrimEnd("\") + "\" + $picture.BaseName + "_$random" + $picture.Extension)
+        }
+    } else {
+         Move-Item -Path $picture.FullName -Destination $destination
+    }
+   
 }
 
 function Get-Month($m) {
@@ -261,6 +288,7 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
 
             $month = Get-Month -m $dateTaken.Month
             switch($OrganizeBy) {
+
                 "YEAR" {
                     $newFolder = $dateTaken.Year.toString()
                     break;
@@ -334,12 +362,13 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                     try {
                         Write-Host "Copying $($p.Name) to $newPath..." -NoNewline 
                         $copyStart = Get-Date                       
-                        Copy-Picture -picture $p -destination $newPath
-                        $copyEnd = Get-Date
-
                         if ($AddDatePrefix) {
-                            Rename-Item -Path ($newPath.TrimEnd("\") + "\" + $p.Name) -NewName ($(Get-Date $dateTaken -Format MMddyyyy) + "-" + $p.Name)
+                            Copy-Picture -picture $p -destination $newPath -DatePrefix
+                        } else {
+                            Copy-Picture -picture $p -destination $newPath
                         }
+
+                        $copyEnd = Get-Date
 
                         Write-Host "Done" -ForegroundColor Green
                         $o = New-Object -TypeName PSObject -Property @{
@@ -374,11 +403,14 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
                     try {
                         Write-Host "Moving $($p.Name) to $newPath..." -NoNewline 
                         $moveStart = Get-Date
-                        Move-Picture -picture $p -destination $newPath
-                        $moveEnd = Get-Date
                         if ($AddDatePrefix) {
-                                Rename-Item -Path ($newPath.TrimEnd("\") + "\" + $p.Name) -NewName ($(Get-Date $dateTaken -Format MMddyyyy) + "-" + $p.Name)
-                            }
+                            Move-Picture -picture $p -destination $newPath -DatePrefix
+                        } else {
+                            Move-Picture -picture $p -destination $newPath
+                        }
+                        
+                        $moveEnd = Get-Date
+
                         Write-Host "Done" -ForegroundColor Green
                         $o = New-Object -TypeName PSObject -Property @{
                             Operation = "Move";
@@ -392,6 +424,7 @@ function Group-Pictures($Recurse, $Scope, $target, $destination, $Operation, $Or
 						$actions += $o
                         break;
                     } catch {
+                        Write-Host "Error" -ForegroundColor Red
                         $o = New-Object -TypeName PSObject -Property @{
                             Operation = "Move";
                             Source = $p.FullName;
